@@ -21,3 +21,5 @@ jobs:
       - name: Ejecutar pruebas
         working-directory: back
         run: chmod +x mvnw && ./mvnw test
+
+# Prueba de GitHub Actions
