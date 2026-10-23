@@ -19,7 +19,7 @@ jobs:
           java-version: '17'
 
       - name: Ejecutar pruebas
-        working-directory: back
+        working-directory: API
         run: chmod +x mvnw && ./mvnw test
 
 # Prueba de GitHub Actions
