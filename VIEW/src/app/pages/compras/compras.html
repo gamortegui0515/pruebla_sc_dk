@@ -1,0 +1,110 @@
+<app-diseno-admin>
+  <div class="pagina">
+    <div class="pagina__encabezado">
+      <div>
+        <h1 class="pagina__titulo">Compras</h1>
+        <span class="pagina__breadcrumb">MercaCredit / Compras</span>
+      </div>
+    </div>
+
+    <div class="pagina__formulario">
+      <h2 class="pagina__subtitulo">Registrar Compra</h2>
+
+      @if (error) {
+        <p class="pagina__error">{{ error }}</p>
+      }
+
+      <div class="pagina__campos">
+        <div class="pagina__select">
+          <label class="campo__etiqueta">Tipo de Usuario <span class="requerido">*</span></label>
+          <select (change)="cambiarTipoUsuario($any($event.target).value)">
+            <option value="PAREJA" [selected]="tipoUsuario === 'PAREJA'">Pareja</option>
+            <option value="CLIENTE" [selected]="tipoUsuario === 'CLIENTE'">Cliente</option>
+          </select>
+        </div>
+
+        <div class="pagina__select">
+          <label class="campo__etiqueta">{{ tipoUsuario === 'PAREJA' ? 'Pareja' : 'Cliente' }} <span class="requerido">*</span></label>
+          <select (change)="idUsuarioSeleccionado = +$any($event.target).value">
+            <option value="0">Seleccionar</option>
+            @if (tipoUsuario === 'PAREJA') {
+              @for (p of parejas(); track p.id_usuario) {
+                <option [value]="p.id_usuario">{{ p.primer_nombre }} {{ p.primer_apellido }}</option>
+              }
+            } @else {
+              @for (c of clientes(); track c.id_usuario) {
+                <option [value]="c.id_usuario">{{ c.primer_nombre }} {{ c.primer_apellido }}</option>
+              }
+            }
+          </select>
+        </div>
+
+        <div class="pagina__select">
+          <label class="campo__etiqueta">Almacén <span class="requerido">*</span></label>
+          <select (change)="idAlmacenSeleccionado = +$any($event.target).value">
+            <option value="0">Seleccionar almacén</option>
+            @for (a of almacenes(); track a.id_almacen) {
+              <option [value]="a.id_almacen">{{ a.nombre_almacen }}</option>
+            }
+          </select>
+        </div>
+
+        <app-campo-formulario
+          etiqueta="Monto *"
+          id="monto"
+          tipo="number"
+          placeholder="0"
+          [valor]="monto"
+          (valorChange)="monto = +$event"
+        />
+      </div>
+
+      <p class="pagina__nota">Fecha y hora se registran automáticamente al confirmar.</p>
+
+      <div class="pagina__acciones">
+        <app-boton etiqueta="CONFIRMAR COMPRA" (click)="confirmarCompra()" />
+      </div>
+    </div>
+
+    <p class="pagina__conteo">Historial Total de Compras ({{ compras().length }} registros)</p>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Hora</th>
+          <th>Usuario</th>
+          <th>Tipo</th>
+          <th>Almacén</th>
+          <th>Valor</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of compras(); track c.cod_compra) {
+          <tr>
+            <td>{{ c.fecha }}</td>
+            <td>{{ c.hora }}</td>
+            <td>{{ c.nombre_pareja_completo ?? c.nombre_cliente_completo }}</td>
+            <td>
+              <span class="etiqueta-tipo" [class.etiqueta-tipo--cliente]="!c.nombre_pareja_completo">
+                {{ c.nombre_pareja_completo ? 'Pareja' : 'Cliente' }}
+              </span>
+            </td>
+            <td>{{ c.nombre_almacen }}</td>
+            <td>$ {{ c.monto | number:'1.0-0' }}</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6" class="tabla__vacio">No hay compras registradas.</td></tr>
+        }
+      </tbody>
+      @if (compras().length) {
+        <tfoot>
+          <tr class="tabla__total">
+            <td colspan="5">Total</td>
+            <td>$ {{ totalCompras() | number:'1.0-0' }}</td>
+          </tr>
+        </tfoot>
+      }
+    </table>
+  </div>
+</app-diseno-admin>
