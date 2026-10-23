@@ -23,3 +23,4 @@ jobs:
         run: chmod +x mvnw && ./mvnw test
 
 # Prueba de GitHub Actions
+# Verificacion inicial del flujo CI
